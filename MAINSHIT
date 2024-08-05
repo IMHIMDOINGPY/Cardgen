@@ -1,0 +1,272 @@
+import random
+import os
+from faker import Faker
+from colorama import Fore, Style, init
+
+init()
+
+VERSION = "v.beta.0.9"
+fake = Faker()
+
+# Define valid keys
+VALID_KEYS = {
+    "ABC123": "User1",
+    "XYZ789": "User2",
+    "DEF456": "Admin"
+}
+
+# Card Data
+CARD_DATA = {
+    "Amazon Cards": {
+        "60457811425": ["$1,000"],
+        "604578114": ["$2,000"],
+        "604578118": ["$5,000"],
+        "6045781123": ["$10,000"],
+        "60457811496": ["$20,000"],
+        "60457811436": ["$40,000"],
+        "60457811318": ["$100,000"],
+        "604578172729": ["Amazon Corporate Revolving Store Card"],
+        "414840": ["Amazon Visa Signature Credit Card"],
+        "60457811": ["Amazon Standard Store Card"],
+    },
+    "HQ Cards": {
+        "5859752142": ["HQ BestBuy Card", "HQ MultiFunctional Discover Card"],
+        "601120": ["HQ MultiFunctional Discover Card"],
+    },
+    "BestBuy Cards": {
+        "702126": ["Unlimited BestBuy Store Card"],
+    },
+    "Target Cards": {
+        "5859752142": ["Unlimited Target Store Card"],
+    },
+    "Credit Card": {
+        "American Express": ["34", "37"],
+        "Bankcard": ["5610", "560221", "560222", "560223", "560224", "560225"],
+        "China T-Union": ["31"],
+        "China UnionPay": ["62"],
+        "Diners Club enRoute": ["2014", "2149"],
+        "Diners Club International": ["36", "300", "301", "302", "303", "304", "305", "3095", "38", "39"],
+        "Diners Club United States & Canada": ["54", "55"],
+        "Discover Card": ["6011", "644", "645", "646", "647", "648", "649", "65", "622126", "622925"],
+        "UkrCard": ["60400100", "60420099"],
+        "RuPay": ["60", "65", "81", "82", "508", "353", "356"],
+        "InterPayment": ["636"],
+        "InstaPayment": ["637", "638", "639"],
+        "JCB": ["3528", "3589"],
+        "Laser": ["6304", "6706", "6771", "6709"],
+        "Maestro (UK)": ["6759", "676770", "676774"],
+        "Maestro": ["5018", "5020", "5038", "5893", "6304", "6759", "6761", "6762", "6763"],
+        "Dankort": ["5019", "4571"],
+        "Mir": ["2200", "2201", "2202", "2203", "2204"],
+        "BORICA": ["2205"],
+        "NPS Pridnestrovie": ["6054740", "6054741", "6054742", "6054743", "6054744"],
+        "Mastercard": ["2221", "2720", "51", "52", "53", "54", "55"],
+        "Solo": ["6334", "6767"],
+        "Switch": ["4903", "4905", "4911", "4936", "564182", "633110", "6333", "6759"],
+        "Troy": ["65", "9792"],
+        "Visa": ["4"],
+        "Visa Electron": ["4026", "417500", "4508", "4844", "4913", "4917"],
+        "UATP": ["1"],
+        "Verve": ["506099", "506198", "650002", "650027", "507865", "507964"],
+        "LankaPay": ["357111"],
+        "UzCard": ["8600"],
+        "Humo": ["9860"],
+        "GPN": ["1", "2", "6", "7", "8", "9"],
+    }
+}
+
+# ASCII Art
+ASCII_ART = r"""
+ $$$$$$\            $$\   $$\ $$$$$$$\          $$\    $$$$$$\   $$$$$$\  $$\   $$\ 
+$$$ __$$\           $$ |  $$ |$$  ____|       $$$$ |  $$  __$$\ $$ ___$$\ $$ |  $$ |
+$$$$\ $$ |$$\   $$\ $$ |  $$ |$$ |            \_$$ |  \__/  $$ |\_/   $$ |$$ |  $$ |
+$$\$$\$$ |\$$\ $$  |$$$$$$$$ |$$$$$$$\          $$ |   $$$$$$  |  $$$$$ / $$$$$$$$ |
+$$ \$$$$ | \$$$$  / \_____$$ |\_____$$\         $$ |  $$  ____/   \___$$\ \_____$$ |
+$$ |\$$$ | $$  $$<        $$ |$$\   $$ |        $$ |  $$ |      $$\   $$ |      $$ |
+\$$$$$$  /$$  /\$$\       $$ |\$$$$$$  |      $$$$$$\ $$$$$$$$\ \$$$$$$  |      $$ |
+ \______/ \__/  \__|      \__| \______/$$$$$$\\______|\________| \______/       \__|
+                                       \______|                                     
+"""
+
+def luhn_check(card_number):
+    def digits_of(n):
+        return [int(d) for d in str(n)]
+    digits = digits_of(card_number)
+    odd_digits = digits[-1::-2]
+    even_digits = digits[-2::-2]
+    checksum = sum(odd_digits)
+    for d in even_digits:
+        checksum += sum(digits_of(d * 2))
+    return checksum % 10 == 0
+
+def generate_card_number(bin, length):
+    card_number = bin
+    while len(card_number) < (length - 1):
+        card_number += str(random.randint(0, 9))
+    checksum_digit = str((10 - sum(int(digit) for digit in str(card_number + "0")) % 10) % 10)
+    return card_number + checksum_digit
+
+def generate_valid_card_number(bin, length):
+    while True:
+        card_number = generate_card_number(bin, length)
+        if luhn_check(card_number):
+            return card_number
+
+def generate_card_info(card_number, card_type):
+    return {
+        "BRAND": card_type,
+        "NUMBER": card_number,
+        "BANK": fake.company(),
+        "NAME": fake.name(),
+        "ADDRESS": fake.address(),
+        "COUNTRY": fake.country(),
+        "MONEY": f"${random.randint(1, 10000)}",
+        "CVV/CVC": f"{random.randint(100, 999)}",
+        "EXPIRY": f"{random.randint(1, 12):02d}/{random.randint(2024, 2030)}",
+        "PIN": f"{random.randint(1000, 9999)}"
+    }
+
+def print_card_info(card_info):
+    border = "-" * 50
+    print(Fore.YELLOW + border)
+    print(Fore.CYAN + "CARD DETAILS" + Style.RESET_ALL)
+    print(Fore.YELLOW + border)
+    for key, value in card_info.items():
+        print(f"{Fore.GREEN}{key: <10}:{Style.RESET_ALL} {value}")
+    print(Fore.YELLOW + border + Style.RESET_ALL)
+
+def key_check():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(Fore.GREEN + "Key Validation" + Style.RESET_ALL)
+    key = input(Fore.YELLOW + "Enter your access key: " + Style.RESET_ALL).strip()
+    if key in VALID_KEYS:
+        print(Fore.GREEN + f"Access granted. Welcome, {VALID_KEYS[key]}!" + Style.RESET_ALL)
+        input("Press Enter to continue...")
+        main_menu()
+    else:
+        print(Fore.RED + "Invalid key. Access denied." + Style.RESET_ALL)
+        input("Press Enter to try again...")
+        key_check()
+
+def main_menu():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(Fore.GREEN + ASCII_ART + Style.RESET_ALL)
+    print(Fore.YELLOW + f"Version: {VERSION}\n" + Style.RESET_ALL)
+    print(Fore.CYAN + "1. Amazon Cards")
+    print("2. HQ Cards")
+    print("3. BestBuy Cards")
+    print("4. Target Cards")
+    print("5. Credit Card Generator")
+    print("6. Exit" + Style.RESET_ALL)
+    choice = input(Fore.YELLOW + "Choose an option: " + Style.RESET_ALL)
+    if choice == "1":
+        amazon_cards_menu()
+    elif choice == "2":
+        hq_cards_menu()
+    elif choice == "3":
+        bestbuy_cards_menu()
+    elif choice == "4":
+        target_cards_menu()
+    elif choice == "5":
+        credit_card_generator_menu()
+    elif choice == "6":
+        exit()
+    else:
+        print(Fore.RED + "Invalid choice. Try again." + Style.RESET_ALL)
+        input("Press Enter to continue...")
+        main_menu()
+
+def amazon_cards_menu():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(Fore.GREEN + "Amazon Cards Menu" + Style.RESET_ALL)
+    print(Fore.CYAN + "Select a card type:" + Style.RESET_ALL)
+    for i, (bin, descriptions) in enumerate(CARD_DATA["Amazon Cards"].items(), 1):
+        print(f"{i}. BIN: {bin} - Descriptions: {', '.join(descriptions)}")
+    
+    choice = input(Fore.YELLOW + "Choose a card type: " + Style.RESET_ALL).strip()
+    try:
+        selected_bin = list(CARD_DATA["Amazon Cards"].keys())[int(choice) - 1]
+        print(Fore.CYAN + f"Selected BIN: {selected_bin}" + Style.RESET_ALL)
+        amount = input(Fore.YELLOW + "Enter the number of cards to generate: " + Style.RESET_ALL).strip()
+        try:
+            num_cards = int(amount)
+            length = 16  # Set a fixed length for the card numbers (e.g., 16 digits)
+            for _ in range(num_cards):
+                card_number = generate_valid_card_number(selected_bin, length)
+                card_info = generate_card_info(card_number, "Amazon Card")
+                print("\n" + Fore.CYAN + f"Generated Amazon Card:" + Style.RESET_ALL)
+                print_card_info(card_info)
+        except ValueError:
+            print(Fore.RED + "Invalid number. Try again." + Style.RESET_ALL)
+    except (IndexError, ValueError):
+        print(Fore.RED + "Invalid choice. Try again." + Style.RESET_ALL)
+    
+    input("Press Enter to continue...")
+    main_menu()
+
+def hq_cards_menu():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(Fore.GREEN + "HQ Cards Menu" + Style.RESET_ALL)
+    print(Fore.CYAN + "Select a card type:" + Style.RESET_ALL)
+    for i, (bin, descriptions) in enumerate(CARD_DATA["HQ Cards"].items(), 1):
+        print(f"{i}. BIN: {bin} - Descriptions: {', '.join(descriptions)}")
+    input("Press Enter to continue...")
+    main_menu()
+
+def bestbuy_cards_menu():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(Fore.GREEN + "BestBuy Cards Menu" + Style.RESET_ALL)
+    print(Fore.CYAN + "Select a card type:" + Style.RESET_ALL)
+    for i, (bin, descriptions) in enumerate(CARD_DATA["BestBuy Cards"].items(), 1):
+        print(f"{i}. BIN: {bin} - Descriptions: {', '.join(descriptions)}")
+    input("Press Enter to continue...")
+    main_menu()
+
+def target_cards_menu():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(Fore.GREEN + "Target Cards Menu" + Style.RESET_ALL)
+    print(Fore.CYAN + "Select a card type:" + Style.RESET_ALL)
+    for i, (bin, descriptions) in enumerate(CARD_DATA["Target Cards"].items(), 1):
+        print(f"{i}. BIN: {bin} - Descriptions: {', '.join(descriptions)}")
+    input("Press Enter to continue...")
+    main_menu()
+
+def credit_card_generator_menu():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(Fore.GREEN + "Credit Card Generator" + Style.RESET_ALL)
+    print(Fore.CYAN + "Which card type do you want?" + Style.RESET_ALL)
+    card_types = list(CARD_DATA["Credit Card"].keys())
+    for i, card_type in enumerate(card_types, 1):
+        print(f"{i}. {card_type}")
+    
+    choice = input(Fore.YELLOW + "Choose a card type: " + Style.RESET_ALL)
+    try:
+        selected_card_type = card_types[int(choice) - 1]
+        bins = CARD_DATA["Credit Card"][selected_card_type]
+        print(Fore.CYAN + f"Selected Card Type: {selected_card_type}" + Style.RESET_ALL)
+        print(Fore.CYAN + "Available BINs:" + Style.RESET_ALL)
+        for bin in bins:
+            print(f"BIN: {bin}")
+        
+        num_cards = input(Fore.YELLOW + "Enter the number of cards to generate: " + Style.RESET_ALL).strip()
+        
+        try:
+            num_cards = int(num_cards)
+            length = 16  # Set a fixed length for the card numbers (e.g., 16 digits)
+
+            for _ in range(num_cards):
+                selected_bin = random.choice(bins)
+                card_number = generate_valid_card_number(selected_bin, length)
+                card_info = generate_card_info(card_number, selected_card_type)
+                print("\n" + Fore.CYAN + f"Generated {selected_card_type} Card:" + Style.RESET_ALL)
+                print_card_info(card_info)
+        except ValueError:
+            print(Fore.RED + "Invalid number. Try again." + Style.RESET_ALL)
+    except (IndexError, ValueError):
+        print(Fore.RED + "Invalid choice. Try again." + Style.RESET_ALL)
+    
+    input("Press Enter to continue...")
+    main_menu()
+
+if __name__ == "__main__":
+    key_check()
