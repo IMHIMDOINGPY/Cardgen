@@ -12,7 +12,8 @@ fake = Faker()
 VALID_KEYS = {
     "IMAGINE567": "Punchmade",
     "XYZ789": "User2",
-    "DEF456": "Admin"
+    "DEF456": "Admin",
+    "RoleikaElias123": "Elias, Admin"
 }
 
 # Card Data
