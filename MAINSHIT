@@ -10,7 +10,7 @@ fake = Faker()
 
 # Define valid keys
 VALID_KEYS = {
-    "ABC123": "User1",
+    "IMAGINE567": "Punchmade",
     "XYZ789": "User2",
     "DEF456": "Admin"
 }
