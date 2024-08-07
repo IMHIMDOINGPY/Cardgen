@@ -1,5 +1,6 @@
 import random
 import os
+import subprocess
 from faker import Faker
 from colorama import Fore, Style, init
 
@@ -8,12 +9,12 @@ init()
 VERSION = "v.beta.0.9"
 fake = Faker()
 
-# Define valid keys
+# Define valid keys and associated HWIDs
 VALID_KEYS = {
-    "IMAGINE567": "Punchmade",
-    "XYZ789": "User2",
-    "DEF456": "Admin",
-    "RoleikaElias123": "Elias, Admin"
+    "IMAGINE567": {"user": "Punchmade", "hwid": "YOUR_HWID_1"},
+    "XYZ789": {"user": "User2", "hwid": "YOUR_HWID_2"},
+    "ownkey1": {"user": "Admin", "hwid": "28C94414-E468-8617-AA84-2CF05DD55C52"},
+    "RoleikaElias123": {"user": "Elias, Admin", "hwid": "YOUR_HWID_4"}
 }
 
 # Card Data
@@ -89,6 +90,16 @@ $$ |\$$$ | $$  $$<        $$ |$$\   $$ |        $$ |  $$ |      $$\   $$ |      
                                        \______|                                     
 """
 
+def get_hwid():
+    """Retrieve the hardware ID from the system."""
+    if os.name == 'nt':
+        result = subprocess.run(['wmic', 'csproduct', 'get', 'uuid', '/value'], capture_output=True, text=True)
+        hwid = result.stdout.strip().split('=')[1]
+        return hwid
+    else:
+        # Implement for other operating systems if necessary
+        raise NotImplementedError("HWID retrieval is not implemented for this OS.")
+
 def luhn_check(card_number):
     def digits_of(n):
         return [int(d) for d in str(n)]
@@ -140,14 +151,20 @@ def key_check():
     os.system('cls' if os.name == 'nt' else 'clear')
     print(Fore.GREEN + "Key Validation" + Style.RESET_ALL)
     key = input(Fore.YELLOW + "Enter your access key: " + Style.RESET_ALL).strip()
+
+    hwid = get_hwid()
     if key in VALID_KEYS:
-        print(Fore.GREEN + f"Access granted. Welcome, {VALID_KEYS[key]}!" + Style.RESET_ALL)
-        input("Press Enter to continue...")
-        main_menu()
+        if VALID_KEYS[key]["hwid"] == hwid:
+            print(Fore.GREEN + f"Access granted. Welcome, {VALID_KEYS[key]['user']}!" + Style.RESET_ALL)
+            input("Press Enter to continue...")
+            main_menu()
+        else:
+            print(Fore.RED + "Invalid HWID. Access denied." + Style.RESET_ALL)
     else:
         print(Fore.RED + "Invalid key. Access denied." + Style.RESET_ALL)
-        input("Press Enter to try again...")
-        key_check()
+    
+    input("Press Enter to try again...")
+    key_check()
 
 def main_menu():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -201,9 +218,6 @@ def amazon_cards_menu():
             print(Fore.RED + "Invalid number. Try again." + Style.RESET_ALL)
     except (IndexError, ValueError):
         print(Fore.RED + "Invalid choice. Try again." + Style.RESET_ALL)
-    
-    input("Press Enter to continue...")
-    main_menu()
 
 def hq_cards_menu():
     os.system('cls' if os.name == 'nt' else 'clear')
