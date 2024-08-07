@@ -14,7 +14,8 @@ VALID_KEYS = {
     "IMAGINE567": {"user": "Punchmade", "hwid": "YOUR_HWID_1"},
     "XYZ789": {"user": "User2", "hwid": "YOUR_HWID_2"},
     "ownkey1": {"user": "Admin", "hwid": "28C94414-E468-8617-AA84-2CF05DD55C52"},
-    "RoleikaElias123": {"user": "Elias, Admin", "hwid": "DF5F9B77-CF1D-EF4A-8629-A0D2283A0A43"}
+    "RoleikaElias123": {"user": "Elias, Admin", "hwid": "DF5F9B77-CF1D-EF4A-8629-A0D2283A0A43"},
+    "justinlovesplanes777": {"user": "Justin, User", "hwid": "NOT-FIXED-YET"}
 }
 
 # Card Data
