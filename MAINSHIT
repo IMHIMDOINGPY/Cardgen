@@ -17,10 +17,12 @@ VALID_KEYS = {
     "RoleikaElias123": {"user": "Elias, Admin", "hwid": "DF5F9B77-CF1D-EF4A-8629-A0D2283A0A43"},
     "justinlovesplanes777": {"user": "Justin, User", "hwid": "695BFC47-D275-EC11-80E3-088FC33DF54C"},
     "Freezy123@": {"user": "Freezy, User", "hwid": "03560274-043C-0597-3806-C30700080009"},
-    "KFL22": {"user": "KFL, User", "hwid": "88ADE986-5FBA-11ED-9016-AFBD647BBA56"}
+    "KFL22": {"user": "KFL, User", "hwid": "88ADE986-5FBA-11ED-9016-AFBD647BBA56"},
+    "KUK1": {"user": "Kornet mitt, User", "hwid": "F3640600-AAFB-9C7F-A8F5-CD0489565E03"}
+    
 }
 
-# Card Data
+# Card Data 
 CARD_DATA = {
     "Amazon Cards": {
         "60457811425": ["$1,000"],
