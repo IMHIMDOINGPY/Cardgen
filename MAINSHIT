@@ -18,7 +18,8 @@ VALID_KEYS = {
     "justinlovesplanes777": {"user": "Justin, User", "hwid": "695BFC47-D275-EC11-80E3-088FC33DF54C"},
     "Freezy123@": {"user": "Freezy, User", "hwid": "03560274-043C-0597-3806-C30700080009"},
     "KFL22": {"user": "KFL, User", "hwid": "88ADE986-5FBA-11ED-9016-AFBD647BBA56"},
-    "KUK1": {"user": "Kornet mitt, User", "hwid": "F3640600-AAFB-9C7F-A8F5-CD0489565E03"}
+    "KUK1": {"user": "Kornet mitt, User", "hwid": "F3640600-AAFB-9C7F-A8F5-CD0489565E03"},
+    "Blues12345!": {"user": "fahim my niggaaaaa, User", "hwid": "9221FA8B-4663-01E9-C5E6-E89C25479F8C"}
     
 }
 
